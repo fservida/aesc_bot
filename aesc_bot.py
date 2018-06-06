@@ -19,7 +19,7 @@ dispatcher.add_handler(start_handler)
 
 # help
 def help(bot, update):
-    bot.send_message(chat_id=update.message.chat_id, text="/help -> Display help\n/summer -> Display summer activities\n/ete -> Alias for summer\ndeadlines -> Display importand deadlines\n/delai -> Alias for deadlines")
+    bot.send_message(chat_id=update.message.chat_id, text="/help -> Display help\n/summer -> Display summer activities\n/ete -> Alias for summer\n/deadlines -> Display importand deadlines\n/delai -> Alias for deadlines")
 help_handler = CommandHandler('help', help)
 dispatcher.add_handler(help_handler)
 
