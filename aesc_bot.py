@@ -1,10 +1,12 @@
+import os
+
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import MessageHandler, Filters
 
 import logging
 
-updater = Updater(token='567528274:AAFefGLjHw6Fcu7GPE4wWkR_eXGPixVbYtQ')
+updater = Updater(token=os.environ.get("API_KEY", None))
 dispatcher = updater.dispatcher
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
