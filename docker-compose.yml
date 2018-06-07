@@ -2,8 +2,8 @@ version: '2'
 
 services:
   aesc_bot:
+    image: cesco/aesc_bot
     restart: always
-    build: .
     container_name: telegram_aesc_bot
     environment:
       - API_KEY=${API_KEY}
