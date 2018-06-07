@@ -4,3 +4,4 @@ ete - Alias for summer
 deadlines - Display importand deadlines
 delai - Alias for deadlines
 version - Display Bot version
+menu - Display menus for a given restaurant

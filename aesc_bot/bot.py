@@ -40,7 +40,7 @@ def create_bot(**kwargs):
     dispatcher.add_handler(CommandHandler('summer', summer))
     dispatcher.add_handler(CommandHandler('ete', summer))
     dispatcher.add_handler(CommandHandler('version', version))
-
+    dispatcher.add_handler(CommandHandler('menu', menu, pass_args=True))
     dispatcher.add_handler(MessageHandler(Filters.text, echo))
 
     # Log errors

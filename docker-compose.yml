@@ -7,3 +7,19 @@ services:
     container_name: telegram_aesc_bot
     environment:
       - API_KEY=${API_KEY}
+      - MYSQL_USER=telegram_bot
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+  aesc_bot_db:
+    image: mariadb:10
+    restart: always
+    container_name: telegram_aesc_bot_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=telegram_bot
+      - MYSQL_USER=telegram_bot
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - /Users/francesco/docker/telegram_bot/mysql:/var/lib/mysql
+    ports:
+    - "3320:3306"
