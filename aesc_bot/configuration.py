@@ -53,5 +53,5 @@ class Configuration:
 if __name__ == '__main__':
     conf = Configuration.get_instance()
     print(conf.help)
-    conf.help = "../command_list.txt"
+    conf.help = "command_list.txt"
     print(conf.help)

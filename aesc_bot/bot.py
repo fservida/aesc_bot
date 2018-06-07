@@ -28,7 +28,7 @@ def create_bot(**kwargs):
     logger = logging.getLogger(__name__)
 
     conf.logger = logger
-    conf.help = kwargs.get("command_list", "command_list.txt")
+    conf.help = kwargs.get("command_list", "aesc_bot/command_list.txt")
 
     updater = Updater(token=os.environ.get("API_KEY", None))
     dispatcher = updater.dispatcher
