@@ -5,6 +5,10 @@
 # Created on 07.06.18
 
 from aesc_bot.configuration import Configuration
+from aesc_bot.utils import build_menu
+
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
 # import requests
 import bs4
 # import html
@@ -13,18 +17,13 @@ from pprint import pprint
 
 import feedparser
 
-cantine_names = {
-    "unitheque": ("uni", "unitheque", "banane", "unithèque"),
-    "amphimax": ("amphi", "amphimax", "max"),
-    "geopolis": ("geopolis", "géopolis"),
-    "css": ("css", "sport", "centre sport et santé"),
-    "restaurant-de-dorigny": ("da nino", "restaurant de dorigny")
+cantines = {
+    "Amphimax": "amphimax",
+    "Centre Sport et Santé": "css",
+    "Geopolis": "geopolis",
+    "Restaurant de Dorigny": "restaurant-de-dorigny",
+    "Unithèque": "unitheque",
 }
-
-cantine_names_reverse = {}
-for cantine, aliases in cantine_names.items():
-    for alias in aliases:
-        cantine_names_reverse[alias] = cantine
 
 
 # start
@@ -52,35 +51,47 @@ def summer(bot, update):
 
 
 def parse_menu(cantine):
-
     feed = feedparser.parse("https://www2.unil.ch/menus/rss/menu-du-jour/{}".format(cantine))
 
     assiettes = {}
-    for assiette in feed['entries']:
-        assiette_name = assiette['title'].split("-")[1].strip().replace(u'\xa0', ' ')
-        assiette_contenu = "\n\t".join([line.strip() for line in bs4.BeautifulSoup(assiette['summary'], "html.parser").text.strip().strip("\n").split("\n")])
-        assiettes[assiette_name] = assiette_contenu
+    if feed.get('entries', False):
+        for assiette in feed['entries']:
+            assiette_name = assiette['title'].split("-")[1].strip().replace(u'\xa0', ' ')
+            assiette_contenu = "\n\t".join([line.strip() for line in
+                                            bs4.BeautifulSoup(assiette['summary'], "html.parser").text.strip().strip(
+                                                "\n").split("\n")])
+            assiettes[assiette_name] = assiette_contenu
+    else:
+        assiettes = {"Informations pas disponibles": "Le restaurant est vraisamblablement fermé aujourd'hui"}
 
     return assiettes
 
 
 def format_menu(assiettes):
     return "\n".join(
-        ["*{}*:\n\t{}".format(assiette_name, assiette_contenu) for assiette_name, assiette_contenu in assiettes.items()])
+        ["*{}*:\n\t{}".format(assiette_name, assiette_contenu) for assiette_name, assiette_contenu in
+         assiettes.items()])
 
 
-def menu(bot, update, args):
-    cantine = " ".join(args)
-    cantine = cantine_names_reverse.get(cantine, None)
+def menu(bot, update):
+    button_list = [InlineKeyboardButton(cantine, callback_data="menu_%s" % cantine_rss) for cantine, cantine_rss in
+                   cantines.items()]
 
-    if cantine is not None:
-        assiettes = parse_menu(cantine)
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
 
-        bot.send_message(chat_id=update.message.chat_id,
-                         text=format_menu(assiettes), parse_mode='Markdown')
-    else:
-        bot.send_message(chat_id=update.message.chat_id,
-                         text="Pas de cantine specifié, eg. utilisation: */menu* banane\n", parse_mode='Markdown')
+    update.message.reply_text("Quelle cantine?", reply_markup=reply_markup)
+
+
+def menu_handler(bot, update):
+    query = update.callback_query
+    cantine = query.data.replace("menu_", "")
+
+    assiettes = parse_menu(cantine)
+
+    bot.edit_message_text(chat_id=query.message.chat_id,
+                          message_id=query.message.message_id,
+                          text=format_menu(assiettes),
+                          parse_mode='Markdown')
 
 
 def version(bot, update):
@@ -93,7 +104,3 @@ def version(bot, update):
 def echo(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text=update.message.text)
 
-
-if __name__ == '__main__':
-    assiettes = parse_menu("unitheque")
-    print(format_menu(assiettes))

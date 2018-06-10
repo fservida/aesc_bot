@@ -8,7 +8,7 @@ import os
 import logging
 
 from telegram.ext import Updater
-from telegram.ext import CommandHandler
+from telegram.ext import CommandHandler, CallbackQueryHandler
 from telegram.ext import MessageHandler, Filters
 
 from .configuration import Configuration
@@ -40,7 +40,9 @@ def create_bot(**kwargs):
     dispatcher.add_handler(CommandHandler('summer', summer))
     dispatcher.add_handler(CommandHandler('ete', summer))
     dispatcher.add_handler(CommandHandler('version', version))
-    dispatcher.add_handler(CommandHandler('menu', menu, pass_args=True))
+    dispatcher.add_handler(CommandHandler('menu', menu))
+    dispatcher.add_handler(CallbackQueryHandler(menu_handler, pattern=r"menu_.*"))
+
     dispatcher.add_handler(MessageHandler(Filters.text, echo))
 
     # Log errors

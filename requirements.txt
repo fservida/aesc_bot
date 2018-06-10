@@ -11,5 +11,4 @@ pyasn1==0.4.3
 python-telegram-bot==10.1.0
 requests==2.18.4
 rsa==3.4.2
-Telethon==0.19.1.4
 urllib3==1.22

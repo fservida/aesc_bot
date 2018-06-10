@@ -12,5 +12,5 @@ install:
   - docker run -d --name aesc_bot_ci aesc_bot
 
 script:
-  - python aesc_bot_testing/commands.py
+  - python run_tests.py
   - docker ps | grep -q aesc_bot_ci

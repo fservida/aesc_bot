@@ -12,7 +12,3 @@ def test_menu(cantine = "amphimax"):
     formatted_menu = format_menu(assiettes)
     if formatted_menu == "":
         raise ValueError("The formatted menu is an empty string")
-
-
-if __name__ == '__main__':
-    test_menu()
