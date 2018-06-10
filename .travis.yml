@@ -9,7 +9,7 @@ services:
 install:
   - pip install -r requirements.txt
   - docker build -t aesc_bot .
-  - docker run -d --name aesc_bot_ci aesc_bot
+  - docker run -d -e API_KEY --name aesc_bot_ci aesc_bot
 
 script:
   - python run_tests.py
