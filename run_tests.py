@@ -7,4 +7,4 @@
 from aesc_bot_testing.commands import *
 
 if __name__ == '__main__':
-    test_menu()
+    unittest.main()

@@ -8,6 +8,7 @@ services:
 
 install:
   - pip install -r requirements.txt
+  - pip install codecov
   - docker build -t aesc_bot .
   - docker run -d -e API_KEY --name aesc_bot_ci aesc_bot
 
@@ -16,4 +17,4 @@ script:
   - docker ps | grep -q aesc_bot_ci
 
 after_success:
-  - bash < (curl -s https://codecov.io/bash)
+  - codecov
