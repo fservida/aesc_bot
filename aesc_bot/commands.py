@@ -100,7 +100,7 @@ def menu_handler(bot, update):
 
 def exams(bot, update):
     button_list = [InlineKeyboardButton(year, callback_data="exams_%s" % coded_year) for year, coded_year in
-                   cantines.items()]
+                   years.items()]
 
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
 
