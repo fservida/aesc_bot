@@ -1,5 +1,10 @@
 # AESC Telegram Bot - @aesc_bot
-[![Build Status](https://travis-ci.org/FranceX/aesc_bot.svg?branch=master)](https://travis-ci.org/FranceX/aesc_bot)
+
+- Master: [![Build Status](https://travis-ci.org/FranceX/aesc_bot.svg?branch=master)](https://travis-ci.org/FranceX/aesc_bot)
+- Exams: [![Build Status_Exams](https://img.shields.io/travis/FranceX/aesc_bot/exams.svg)](https://travis-ci.org/FranceX/aesc_bot/branches)
+- Coverage: [![codecov](https://codecov.io/gh/FranceX/aesc_bot/branch/master/graph/badge.svg)](https://codecov.io/gh/FranceX/aesc_bot)
+- ![GitHub tag](https://img.shields.io/github/tag/FranceX/aesc_bot.svg)
+
 
 Telegram bot pour les etudiants de l'ESC à Université de Lausanne.
 
