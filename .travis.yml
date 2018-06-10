@@ -7,8 +7,10 @@ services:
   - docker
 
 install:
+  - pip install -r requirements.txt
   - docker build -t aesc_bot .
   - docker run -d --name aesc_bot_ci aesc_bot
 
 script:
+  - python aesc_bot_testing/commands.py
   - docker ps | grep -q aesc_bot_ci
