@@ -12,5 +12,8 @@ install:
   - docker run -d -e API_KEY --name aesc_bot_ci aesc_bot
 
 script:
-  - python run_tests.py
+  - coverage run run_tests.py
   - docker ps | grep -q aesc_bot_ci
+
+after_success:
+  - bash < (curl -s https://codecov.io/bash)
