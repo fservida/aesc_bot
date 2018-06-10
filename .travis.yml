@@ -1,0 +1,14 @@
+language: python
+
+python:
+  - 3.6
+
+services:
+  - docker
+
+install:
+  - docker build -t aesc_bot .
+  - docker run -d --name aesc_bot_ci aesc_bot
+
+script:
+  - docker ps | grep -q aesc_bot_ci
