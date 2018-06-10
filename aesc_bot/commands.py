@@ -25,6 +25,16 @@ cantines = {
     "Unithèque": "unitheque",
 }
 
+years = {
+    "1e Année Bachelor": "bsc1",
+    "2e Année Bachelor": "bsc1",
+    "3e Année Bachelor": "bsc1",
+    "Master - ID": "msc_id",
+    "Master - CC": "msc_cc",
+    "Master - NUM": "msc_num",
+    "Master - TRACO": "msc_traco",
+}
+
 
 # start
 def start(bot, update):
@@ -64,10 +74,6 @@ def parse_menu(cantine):
     else:
         assiettes = {"Informations pas disponibles": "Le restaurant est vraisamblablement fermé aujourd'hui"}
 
-    return assiettes
-
-
-def format_menu(assiettes):
     return "\n".join(
         ["*{}*:\n\t{}".format(assiette_name, assiette_contenu) for assiette_name, assiette_contenu in
          assiettes.items()])
@@ -86,12 +92,38 @@ def menu_handler(bot, update):
     query = update.callback_query
     cantine = query.data.replace("menu_", "")
 
-    assiettes = parse_menu(cantine)
+    bot.edit_message_text(chat_id=query.message.chat_id,
+                          message_id=query.message.message_id,
+                          text=parse_menu(cantine),
+                          parse_mode='Markdown')
+
+
+def exams(bot, update):
+    button_list = [InlineKeyboardButton(year, callback_data="exams_%s" % coded_year) for year, coded_year in
+                   cantines.items()]
+
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
+
+    update.message.reply_text("Quelle année?", reply_markup=reply_markup)
+
+
+def exams_handler(bot, update):
+    query = update.callback_query
+    year = query.data.replace("exams_", "")
 
     bot.edit_message_text(chat_id=query.message.chat_id,
                           message_id=query.message.message_id,
-                          text=format_menu(assiettes),
+                          text=parse_exams(year),
                           parse_mode='Markdown')
+
+def parse_exams(year):
+    """
+    This function should take the year of the student as parameter and return the exams for that year
+    :param year:
+    :return:
+    """
+
+    return "Exams for year: {} - Unknown"
 
 
 def version(bot, update):
