@@ -106,3 +106,6 @@ venv.bak/
 
 # Pycharm
 .idea
+
+# AESC_BOT Caches
+cache/

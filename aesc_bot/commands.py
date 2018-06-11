@@ -9,13 +9,14 @@ from aesc_bot.utils import build_menu
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-# import requests
 import bs4
-# import html
-
-from pprint import pprint
-
 import feedparser
+import os
+import errno
+import json
+from datetime import datetime, timedelta
+
+CACHE_MENU_PATH = "cache/menu/"
 
 cantines = {
     "Amphimax": "amphimax",
@@ -51,18 +52,40 @@ def summer(bot, update):
 
 
 def parse_menu(cantine):
-    feed = feedparser.parse("https://www2.unil.ch/menus/rss/menu-du-jour/{}".format(cantine))
 
-    assiettes = {}
-    if feed.get('entries', False):
-        for assiette in feed['entries']:
-            assiette_name = assiette['title'].split("-")[1].strip().replace(u'\xa0', ' ')
-            assiette_contenu = "\n\t".join([line.strip() for line in
-                                            bs4.BeautifulSoup(assiette['summary'], "html.parser").text.strip().strip(
-                                                "\n").split("\n")])
-            assiettes[assiette_name] = assiette_contenu
-    else:
-        assiettes = {"Informations pas disponibles": "Le restaurant est vraisamblablement fermé aujourd'hui"}
+    if not os.path.exists(os.path.dirname(CACHE_MENU_PATH)):
+        try:
+            os.makedirs(os.path.dirname(CACHE_MENU_PATH))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+
+    cache_path = os.path.join(CACHE_MENU_PATH, "%s.json" % cantine)
+
+    try:
+        now = datetime.now()
+        cache_last_edit = datetime.fromtimestamp(os.path.getmtime(cache_path))
+        if now - cache_last_edit < timedelta(hours=1):
+            with open(cache_path) as cache_file:
+                assiettes = json.load(cache_file)
+        else:
+            raise ValueError("Expired cache found, refresh from RSS feed")
+    except (FileNotFoundError, ValueError):
+        feed = feedparser.parse("https://www2.unil.ch/menus/rss/menu-du-jour/{}".format(cantine))
+
+        assiettes = {}
+        if feed.get('entries', False):
+            for assiette in feed['entries']:
+                assiette_name = assiette['title'].split("-")[1].strip().replace(u'\xa0', ' ')
+                assiette_contenu = "\n\t".join([line.strip() for line in
+                                                bs4.BeautifulSoup(assiette['summary'],
+                                                                  "html.parser").text.strip().strip(
+                                                    "\n").split("\n")])
+                assiettes[assiette_name] = assiette_contenu
+        else:
+            assiettes = {"Informations pas disponibles": "Le restaurant est vraisamblablement fermé aujourd'hui"}
+        with open(cache_path, "w") as cache_file:
+            json.dump(assiettes, cache_file)
 
     return assiettes
 
@@ -103,4 +126,3 @@ def version(bot, update):
 # echo
 def echo(bot, update):
     bot.send_message(chat_id=update.message.chat_id, text=update.message.text)
-
