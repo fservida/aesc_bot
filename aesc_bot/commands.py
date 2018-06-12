@@ -14,9 +14,14 @@ import feedparser
 import os
 import errno
 import json
+import yaml
+import requests
+from requests import RequestException
 from datetime import datetime, timedelta
 
 CACHE_MENU_PATH = "cache/menu/"
+ACTIVITIES = os.environ.get("ACTIVITY_YAML",
+                            "https://gist.githubusercontent.com/FranceX/d6f03e6c5cc163b801411c327d6e4346/raw/aesc_activities.yml")
 
 cantines = {
     "Amphimax": "amphimax",
@@ -45,14 +50,28 @@ def deadlines(bot, update):
                      text="13 Juin - Rendu 1ere seance travaux de master\n11 Juillet - Rendu 2eme seance travaux de master")
 
 
+def parse_activities(period):
+    try:
+        response = requests.get(ACTIVITIES)
+        response.raise_for_status()
+        activities = yaml.safe_load(response.text)
+        if period not in activities:
+            raise AssertionError("Wanted period not present")
+        activities_formatted = "\n- ".join(
+            ["*{}* - {}".format(activity["date"], activity["desc"]) for activity in activities[period]["activities"]])
+        message = "{}\n\n- {}".format(activities[period]["desc"], activities_formatted)
+    except (RequestException, yaml.YAMLError, AssertionError, KeyError):
+        message = "Error parsing activities"
+
+    return message
+
+
 # summer
 def summer(bot, update):
-    bot.send_message(chat_id=update.message.chat_id,
-                     text="Summer! Barbecue Time!\nFête de fin d'année le 22 juin au parc bourget avec bière offerte et grillade!")
+    bot.send_message(chat_id=update.message.chat_id, text=parse_activities("summer"), parse_mode='Markdown')
 
 
 def parse_menu(cantine):
-
     if not os.path.exists(os.path.dirname(CACHE_MENU_PATH)):
         try:
             os.makedirs(os.path.dirname(CACHE_MENU_PATH))
