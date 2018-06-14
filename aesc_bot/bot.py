@@ -42,6 +42,8 @@ def create_bot(**kwargs):
     dispatcher.add_handler(CommandHandler('version', version))
     dispatcher.add_handler(CommandHandler('menu', menu))
     dispatcher.add_handler(CallbackQueryHandler(menu_handler, pattern=r"menu_.*"))
+    dispatcher.add_handler(CommandHandler('beers', beers))
+    dispatcher.add_handler(CallbackQueryHandler(beers_handler, pattern=r"beers_.*"))
 
     dispatcher.add_handler(MessageHandler(Filters.text, echo))
 

@@ -18,6 +18,8 @@ import yaml
 import requests
 from requests import RequestException
 from datetime import datetime, timedelta
+from aesc_bot.parsers import parse_beer_types
+from aesc_bot.formatters import format_beer_types
 
 CACHE_MENU_PATH = "cache/menu/"
 ACTIVITIES = os.environ.get("ACTIVITY_YAML",
@@ -31,6 +33,16 @@ cantines = {
     "Unithèque": "unitheque",
 }
 
+beers_buttons = {
+    "Types": "types",
+}
+
+beers_functions = {
+    'types': {
+        'parser': parse_beer_types,
+        'formatter': format_beer_types,
+    },
+}
 
 # start
 def start(bot, update):
@@ -133,6 +145,27 @@ def menu_handler(bot, update):
     bot.edit_message_text(chat_id=query.message.chat_id,
                           message_id=query.message.message_id,
                           text=format_menu(assiettes),
+                          parse_mode='Markdown')
+
+
+def beers(bot, update):
+    button_list = [InlineKeyboardButton(beers_button, callback_data="beers_%s" % beers_button_ref) for beers_button, beers_button_ref in
+                   beers_buttons.items()]
+
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
+
+    update.message.reply_text("Fait ton choix mon jeune padawan!", reply_markup=reply_markup)
+
+
+def beers_handler(bot, update):
+    query = update.callback_query
+    button = query.data.replace("beers_", "")
+
+    message = beers_functions[button]['formatter'](beers_functions[button]['parser']())[:4095]
+
+    bot.edit_message_text(chat_id=query.message.chat_id,
+                          message_id=query.message.message_id,
+                          text=message,
                           parse_mode='Markdown')
 
 
