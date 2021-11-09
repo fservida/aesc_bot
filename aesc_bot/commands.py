@@ -23,7 +23,7 @@ from aesc_bot.formatters import format_beer_types
 
 CACHE_MENU_PATH = "cache/menu/"
 ACTIVITIES = os.environ.get("ACTIVITY_YAML",
-                            "https://gist.githubusercontent.com/FranceX/d6f03e6c5cc163b801411c327d6e4346/raw/aesc_activities.yml")
+                            "https://gist.githubusercontent.com/fservida/d6f03e6c5cc163b801411c327d6e4346/raw/aesc_activities.yml")
 
 cantines = {
     "Amphimax": "amphimax",
