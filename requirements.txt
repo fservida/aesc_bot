@@ -13,7 +13,7 @@ pyaes==1.6.1
 pyaml==17.12.1
 pyasn1==0.4.3
 python-telegram-bot==10.1.0
-PyYAML==3.12
+PyYAML==5.4
 requests==2.20.0
 rsa==3.4.2
 six==1.11.0
